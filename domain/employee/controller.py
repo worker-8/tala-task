@@ -14,4 +14,4 @@ def create_employee():
     with create_uow() as uow:
         # TODO: verify if the user is there.
         nw_employee = uow.employee_repository.create(payload)
-        return {"status": True, "payload": EmployeeDTO(dict(nw_employee)).__dict__}
+        return {"status": True, "payload": EmployeeDTO(dict(nw_employee)).to_json}
