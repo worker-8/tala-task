@@ -42,3 +42,21 @@ CREATE TABLE assignment (
     FOREIGN KEY (employee_id) REFERENCES employee(id),
     FOREIGN KEY (task_id) REFERENCES task(id)
 );
+
+INSERT INTO "employee" ("employee_name", "hours_per_day", "available_days") VALUES
+('Sam', '8', '1,2,3,4,5'),
+('John', '4', '1,2,3,4,5'),
+('Rebecca', '8', '1,3,5'),
+('Sebastian', '4', '1,2,3,4,5');
+
+INSERT INTO "skill" ("nombre") VALUES
+('programacion'),
+('diseño'),
+('analisis'),
+('coordinacion');
+
+INSERT INTO "employee_skill" ("employee_id", "skill_id") VALUES
+('1', '1'),
+('2', '2'),
+('3', '3'),
+('4', '4');
