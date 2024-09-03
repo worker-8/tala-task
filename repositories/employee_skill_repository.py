@@ -7,4 +7,4 @@ class EmployeeSkillRepository:
         query = "SELECT * FROM employee_skill"
         cursor.execute(query, [])
 
-        return cursor.fetachall()
+        return cursor.fetchall()
