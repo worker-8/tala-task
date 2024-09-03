@@ -7,7 +7,7 @@ CREATE TABLE employee (
 
 CREATE TABLE skill (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre VARCHAR(50)
+    skill_name VARCHAR(50)
 );
 
 CREATE TABLE employee_skill (
@@ -49,7 +49,7 @@ INSERT INTO "employee" ("employee_name", "hours_per_day", "available_days") VALU
 ('Rebecca', '8', '1,3,5'),
 ('Sebastian', '4', '1,2,3,4,5');
 
-INSERT INTO "skill" ("nombre") VALUES
+INSERT INTO "skill" ("skill_name") VALUES
 ('programacion'),
 ('diseño'),
 ('analisis'),
