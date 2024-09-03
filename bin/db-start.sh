@@ -1,7 +1,7 @@
+#!/bin/bash
+
 echo "REMOVE DB"
-cd database
-rm db.db
-# DB COMMAND CREATION
+rm database/db.db
 
 echo "CREATE DB"
-sqlite3 db.db < ../sql/raw_db.sql
+sqlite3 database/db.db < sql/raw_db.sql
