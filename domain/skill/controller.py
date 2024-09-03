@@ -5,7 +5,7 @@ from .skill_dto import SkillListDTO, SkillDTO
 
 def find_skill():
     with create_uow() as uow:
-        skills = uow.skill_repository.find()
+        skills = uow.skill_repository.find(SkillDTO(data={}))
         list = SkillListDTO(skills)
         return {"status": True, "skills": list.to_json}
 

@@ -1,4 +1,5 @@
 from domain.skill.skill_dto import SkillDTO
+from helpers.query_builder import QueryBuilder
 from helpers.sql import create_fields_values_params
 
 class SkillRepository:
@@ -13,9 +14,16 @@ class SkillRepository:
         
         return cursor.fetchone()
     
-    def find(self):
+    def find(self, payload: SkillDTO):
+        builder = QueryBuilder()
+        builder.add(payload.id, "id = ?")
+
         cursor = self.connection.cursor()
-        query = "SELECT * FROM skill"
-        cursor.execute(query, [])
+        query = f"""
+            SELECT * 
+            FROM skill
+            {builder.where}
+            """
+        cursor.execute(query, builder.params)
 
         return cursor.fetchall()
