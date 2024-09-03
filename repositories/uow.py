@@ -36,5 +36,5 @@ class UnitOfWork:
         return SkillRepository(self.connection)
     
     @property
-    def employee_repository(self) -> EmployeeSkillRepository:
+    def employee_skill_repository(self) -> EmployeeSkillRepository:
         return EmployeeSkillRepository(self.connection)
