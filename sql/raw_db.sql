@@ -22,7 +22,8 @@ CREATE TABLE task (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title VARCHAR(100),
     due_date DATE,
-    time_use INTEGER
+    time_use INTEGER,
+    is_assignment INTEGER
 );
 
 CREATE TABLE task_skill_set (

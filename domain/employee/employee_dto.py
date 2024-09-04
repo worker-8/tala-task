@@ -5,6 +5,14 @@ class EmployeeDTO:
         self.hours_per_day = data.get('hours_per_day')
         self.available_days = data.get('available_days')
 
+        # opts
+        if data.get('group_skills') is not None:
+            self.group_skills = data.get('group_skills')
+        
+        if data.get('group_skills_id') is not None:
+            self.group_skills_id = data.get('group_skills_id')
+
+
     @property
     def to_json(self):
         output = {
@@ -12,10 +20,14 @@ class EmployeeDTO:
             "employee_name": self.employee_name,
             "hours_per_day": self.hours_per_day,
             "available_days": self.available_days,
+            
         }
 
-        if hasattr(self, 'skill_set'):
-            output['skill_set'] = self.skill_set
+        if hasattr(self, 'group_skills'):
+            output['group_skills'] = self.group_skills
+        
+        if hasattr(self, 'group_skills_id'):
+            output['group_skills_id'] = self.group_skills_id
 
         return output
 

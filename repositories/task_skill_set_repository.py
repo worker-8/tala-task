@@ -10,7 +10,6 @@ class TaskSkillSetRepository:
 
     def create(self, data: TaskSkillSetDTO):
         fields, values, params = create_fields_values_params(data.__dict__)
-        print(fields, values, params)
         query = f"""
             INSERT INTO task_skill_set({fields}) 
             VALUES({values}) 

@@ -29,3 +29,22 @@ class AssignmentRepository:
         cursor.execute(query, builder.params)
 
         return cursor.fetchall()
+    
+    def calendarByUser(self, due_date):
+        cursor = self.connection.cursor()
+        query = """
+            WITH calendar AS (
+                WITH RECURSIVE dates(date) AS (
+                VALUES(date('now'))
+                UNION ALL
+                SELECT date(date, '+1 days')
+                FROM dates
+                WHERE date < ?
+                )
+            SELECT date AS possible_date, strftime('%w', date) +1 AS week_day FROM dates)
+            SELECT * FROM calendar;
+        """
+
+        cursor.execute(query, [due_date])
+
+        return cursor.fetchall()

@@ -28,3 +28,21 @@ class EmployeeRepository:
         cursor.execute(query, builder.params)
 
         return cursor.fetchall()
+    
+    def findWithGroupConcatOnSkillName(self, skill_set):
+        cursor = self.connection.cursor()
+        query = f"""
+            WITH employee_pluss AS (SELECT 
+                employee.*,
+                group_concat(skill.skill_name) as group_skills,
+                group_concat(skill.id) as group_skills_id
+            FROM employee
+            INNER JOIN employee_skill ON employee.id = employee_skill.employee_id
+            INNER JOIN skill ON employee_skill.skill_id = skill.id
+            GROUP BY employee.id)
+            SELECT * FROM employee_pluss
+            WHERE group_skills_id LIKE '%{skill_set}%'
+            """
+        cursor.execute(query, [])
+
+        return cursor.fetchall()
