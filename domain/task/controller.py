@@ -46,11 +46,12 @@ def assignment_task():
     with create_uow() as uow:
         # 0. task list
         tasks = _task_list(uow=uow)
-
+        if len(tasks.list) == 0:
+            return {"status": True, "message": "There are no tasks available for assignment"}
+        
         employees = None
         # 1. find user By skill
         for task in tasks.list:
-            print(task.title)
             employees = _employee_list(uow=uow, skill_set=task.group_skills_id)
             employees.get_days
             if len(employees.list) == 0:
@@ -72,8 +73,11 @@ def assignment_task():
                 "date_assignment": date_assignment,
                 "hour_assignment": task.time_use
             })
-            print('sali')
+
             uow.assignment_repository.create(data=assignment_dto)
+            task.is_assignment = 1
+            uow.task_repository.update(data=task)
+            task_assign.append(task.to_json)
 
         return {"status": True, "task_not_assign": task_not_assign, "task_assign": task_assign}
 
@@ -104,7 +108,6 @@ def _pick_employee(uow: create_uow, calendar, employees, time_use):
     for d in calendar:
         loop += 1
         date_assignment = d.get('possible_date')
-        print(loop,'  >>> ',date_assignment)
         week_day = str(d.get('week_day'))
         employees_id = list()
         employees_id_str = ''
@@ -119,26 +122,21 @@ def _pick_employee(uow: create_uow, calendar, employees, time_use):
             date_assignment=date_assignment, employees_id=employees_id_str)
 
         candidates = [dict(item) for item in rs]
-        print('candidates', len(candidates), 'rs', rs)
         
         if len(candidates) == 0:
-            print('no candidate')
             pick_employee_id = employees_id[0]
             break
         
         if len(candidates) < len(employees_id):
-            print('oli')
             pick_employee_id = employees_id[len(candidates)]
             break
 
         for candidate in candidates:
-            print(candidate, candidate.get('hours_remaining') <= time_use, time_use)
             if candidate.get('hours_remaining') >= time_use:
                 pick_employee_id = candidate.get('id')
                 break
         
         if pick_employee_id is not None and date_assignment is not None:
-            print('endloop')
             break
             
 

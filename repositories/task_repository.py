@@ -15,6 +15,16 @@ class TaskRepository:
         cursor.execute(query, params)
 
         return cursor.fetchone()
+    
+    def update(self, data:TaskDTO):
+        cursor = self.connection.cursor()
+        query = """
+            UPDATE task
+            SET is_assignment = ?
+            WHERE id = ?
+        """
+        cursor = self.connection.cursor()
+        cursor.execute(query, [data.is_assignment, data.id])
 
     def find(self, payload: TaskDTO):
         builder = QueryBuilder()

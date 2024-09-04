@@ -48,8 +48,6 @@ class EmployeeRepository:
         return cursor.fetchall()
     
     def calendarAvailability(self, date_assignment, employees_id):
-        
-        self.connection.set_trace_callback(print)
         cursor = self.connection.cursor()
         query = f"""
                 SELECT * 
