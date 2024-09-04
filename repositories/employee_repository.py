@@ -28,3 +28,37 @@ class EmployeeRepository:
         cursor.execute(query, builder.params)
 
         return cursor.fetchall()
+    
+    def findWithGroupConcatOnSkillName(self, skill_set):
+        cursor = self.connection.cursor()
+        query = f"""
+            WITH employee_pluss AS (SELECT 
+                employee.*,
+                group_concat(skill.skill_name) as group_skills,
+                group_concat(skill.id) as group_skills_id
+            FROM employee
+            INNER JOIN employee_skill ON employee.id = employee_skill.employee_id
+            INNER JOIN skill ON employee_skill.skill_id = skill.id
+            GROUP BY employee.id)
+            SELECT * FROM employee_pluss
+            WHERE group_skills_id LIKE '%{skill_set}%'
+            """
+        cursor.execute(query, [])
+
+        return cursor.fetchall()
+    
+    def calendarAvailability(self, date_assignment, employees_id):
+        
+        self.connection.set_trace_callback(print)
+        cursor = self.connection.cursor()
+        query = f"""
+                SELECT * 
+                FROM calendar_availability
+                WHERE date_assignment=?
+                AND id IN ({employees_id})
+                ORDER BY hours_remaining ASC;
+            """
+        cursor.execute(query, [date_assignment])
+        
+        # print(query, employees_id)
+        return cursor.fetchall()

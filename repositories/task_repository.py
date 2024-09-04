@@ -18,6 +18,7 @@ class TaskRepository:
 
     def find(self, payload: TaskDTO):
         builder = QueryBuilder()
+        builder.add(payload.is_assignment, 'is_assignment = ?')
 
         cursor = self.connection.cursor()
         query = f"""
@@ -25,6 +26,29 @@ class TaskRepository:
             FROM task
             {builder.where}
             """
+        cursor.execute(query, builder.params)
+
+        return cursor.fetchall()
+
+    def findWithGroupConcatOnSkillName(self, payload: TaskDTO):
+        builder = QueryBuilder()
+
+        builder.add(payload.id, 'task.id = ?')
+        builder.add(payload.is_assignment, 'task.is_assignment = ?')
+        builder.like(payload.title, 'LOWER(task.title) LIKE LOWER(?)',
+                     lambda x: "%{}%".format(x))
+
+        cursor = self.connection.cursor()
+        query = f"""
+            SELECT task.*,
+                    group_concat(skill.skill_name) as group_skills,
+                    group_concat(skill.id) as group_skills_id
+            FROM task
+            INNER JOIN task_skill_set ON task.id = task_skill_set.task_id
+            INNER JOIN skill ON task_skill_set.skill_id = skill.id
+            {builder.where}
+            GROUP BY task.id;
+        """
         cursor.execute(query, builder.params)
 
         return cursor.fetchall()

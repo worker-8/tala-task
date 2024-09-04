@@ -4,6 +4,14 @@ class TaskDTO:
         self.title = data.get("title")
         self.due_date = data.get("due_date")
         self.time_use = data.get("time_use")
+        self.is_assignment = str(data.get("is_assignment", "0"))
+
+        # opts
+        if data.get('group_skills') is not None:
+            self.group_skills = data.get('group_skills')
+        
+        if data.get('group_skills_id') is not None:
+            self.group_skills_id = data.get('group_skills_id')
 
     @property
     def to_json(self):
@@ -11,11 +19,15 @@ class TaskDTO:
             "id": self.id,
             "title": self.title,
             "due_date": self.due_date,
-            "time_use": self.time_use
+            "time_use": self.time_use,
+            "is_assignment": self.is_assignment,
         }
 
-        if hasattr(self, 'skill_set'):
-            output['skill_set'] = self.skill_set
+        if hasattr(self, 'group_skills'):
+            output['group_skills'] = self.group_skills
+        
+        if hasattr(self, 'group_skills_id'):
+            output['group_skills_id'] = self.group_skills_id
 
         return output
 
