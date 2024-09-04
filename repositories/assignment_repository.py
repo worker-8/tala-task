@@ -30,9 +30,9 @@ class AssignmentRepository:
 
         return cursor.fetchall()
     
-    def calendarByUser(self, due_date):
+    def calendar(self, due_date, available_days):
         cursor = self.connection.cursor()
-        query = """
+        query = f"""
             WITH calendar AS (
                 WITH RECURSIVE dates(date) AS (
                 VALUES(date('now'))
@@ -42,7 +42,8 @@ class AssignmentRepository:
                 WHERE date < ?
                 )
             SELECT date AS possible_date, strftime('%w', date) +1 AS week_day FROM dates)
-            SELECT * FROM calendar;
+            SELECT * FROM calendar
+            WHERE week_day IN ({available_days});
         """
 
         cursor.execute(query, [due_date])

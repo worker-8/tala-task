@@ -46,3 +46,19 @@ class EmployeeRepository:
         cursor.execute(query, [])
 
         return cursor.fetchall()
+    
+    def calendarAvailability(self, date_assignment, employees_id):
+        
+        self.connection.set_trace_callback(print)
+        cursor = self.connection.cursor()
+        query = f"""
+                SELECT * 
+                FROM calendar_availability
+                WHERE date_assignment=?
+                AND id IN ({employees_id})
+                ORDER BY hours_remaining ASC;
+            """
+        cursor.execute(query, [date_assignment])
+        
+        # print(query, employees_id)
+        return cursor.fetchall()
