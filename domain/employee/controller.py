@@ -27,7 +27,7 @@ def create_employee():
             return {"status": True, "payload": EmployeeDTO(dict(nw_employee)).to_json}
 
         for skill in list_of_skill.split(','):
-            merge_employee_skill(
+            _merge_employee_skill(
                 uow=uow, employee_id=nw_employee['id'], skill_id=int(skill))
         
         esDTO = EmployeeSkillDTO({"employee_id": nw_employee['id']})
@@ -40,7 +40,7 @@ def create_employee():
         return {"status": True, "payload": output.to_json}
 
 
-def merge_employee_skill(uow: create_uow, employee_id: int, skill_id: int):
+def _merge_employee_skill(uow: create_uow, employee_id: int, skill_id: int):
     skillDTO = SkillDTO(data={})
     skillDTO.id = skill_id
     skill = uow.skill_repository.find(payload=skillDTO)
@@ -50,6 +50,6 @@ def merge_employee_skill(uow: create_uow, employee_id: int, skill_id: int):
 
     esDTO = EmployeeSkillDTO(
         data={"employee_id": employee_id, "skill_id": skill_id})
-    el = uow.employee_skill_repository.create(data=esDTO)
+    uow.employee_skill_repository.create(data=esDTO)
 
     return True
