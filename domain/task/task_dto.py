@@ -52,7 +52,7 @@ class TaskDTO:
             valid = False
             self.msg_error.append('Must have a title')
         
-        if int(self.time_use) < 0 and int(self.time_use) > 8:
+        if int(self.time_use) < 0 or int(self.time_use) > 8:
             valid = False
             self.msg_error.append('The task can last between 1 and 8 hours')
         

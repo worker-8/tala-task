@@ -25,6 +25,10 @@ def create_employee():
 
     nw_employee = _create_employee_helper(
         payload_user, list_of_skill=list_of_skill)
+    
+    if 'msg_error' in nw_employee:
+        return ({"status": False, "employee": nw_employee}, 401)
+
     return {"status": True, "employee": nw_employee}
 
 
@@ -48,11 +52,17 @@ def upload_csv():
 
 def _create_employee_helper(employee: EmployeeDTO, list_of_skill):
     with create_uow() as uow:
+        if employee.is_valid == False:
+            return employee.to_json
+        
+        if list_of_skill is None or len(list_of_skill) == 0:
+            employee.msg_error = [
+                'It is not possible to create a employee without at least one required Skill']
+            return employee.to_json
+        
+        return {"test":True}
         # TODO: verify if the user is there.
         nw_employee = uow.employee_repository.create(employee)
-
-        if list_of_skill is None:
-            return EmployeeDTO(dict(nw_employee)).to_json
 
         for skill in list_of_skill.split(','):
             _merge_employee_skill(

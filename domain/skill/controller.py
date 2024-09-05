@@ -17,7 +17,7 @@ def create_skill():
     nw_skill = _create_skill_helper(skill=payload)
 
     if 'msg_error' in nw_skill:
-        return ({"status": False, "nw_skill": nw_skill})
+        return ({"status": False, "nw_skill": nw_skill}, 401)
 
     return {"status": True, "nw_skill": nw_skill}
 

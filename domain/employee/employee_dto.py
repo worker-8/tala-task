@@ -31,10 +31,37 @@ class EmployeeDTO:
         if hasattr(self, 'group_skills_id'):
             output['group_skills_id'] = self.group_skills_id
 
+        if hasattr(self, 'msg_error'):
+            output['msg_error'] = self.msg_error
+
         return output
 
     def set_skill_set(self, skill_set):
         self.skill_set = skill_set
+
+    @property
+    def is_valid(self):
+        valid = True
+        self.msg_error = []
+
+        print(len(self.employee_name) == 0)
+
+        if len(self.employee_name) == 0:
+            valid = False
+            self.msg_error.append('Must have a name')
+
+        if int(self.hours_per_day) < 0 or int(self.hours_per_day) > 8:
+            valid = False
+            self.msg_error.append('The employee can work between 1 and 8 hours')
+
+        if len(self.available_days) == 0:
+            valid = False
+            self.msg_error.append('Assign available days')
+
+        if valid:
+            delattr(self, 'msg_error')
+
+        return valid
 
 
 class EmployeeListDTO:
