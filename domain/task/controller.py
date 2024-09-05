@@ -1,7 +1,6 @@
-from asyncio import sleep
-from random import randint
 from flask import request
 from repositories import create_uow
+from helpers.csv import read_csv, form_upload
 
 from .task_dto import TaskDTO, TaskSkillSetDTO, TaskListDTO, AssignmentDTO
 from domain.skill.skill_dto import SkillDTO, SkillListDTO
@@ -21,12 +20,36 @@ def create_task():
     payload_task = TaskDTO(request.json)
     list_of_skill = request.json.get("skill_set")
 
+    nw_task = _create_task_helper(task=payload_task, list_of_skill=list_of_skill)
+    return {"status": True, "tasks": nw_task}
+
+def upload_csv():
+    if request.method == "POST":
+        f = request.files.get('csv')
+        tasks = read_csv(f)
+        output = []
+
+        for task in tasks:
+            t_dto = TaskDTO(data={})
+            t_dto.title = task[0]
+            t_dto.due_date = task[1]
+            t_dto.time_use = task[2]
+
+            nw_task = _create_task_helper(task=t_dto, list_of_skill=task[3])
+            output.append(nw_task)
+
+        return {"status": True, "tasks": output}
+    else:
+        return form_upload(title='Upload tasks')
+
+
+def _create_task_helper(task: TaskDTO, list_of_skill):
     with create_uow() as uow:
         if list_of_skill is None:
             return ({
                 'status': False,
                 'message': 'It is not possible to create a task without at least one required Skill'}, 401)
-        nw_task = uow.task_repository.create(payload_task)
+        nw_task = uow.task_repository.create(task)
 
         for skill in list_of_skill.split(','):
             _merge_task_skill(uow=uow, task_id=nw_task['id'], skill_id=skill)
@@ -36,7 +59,7 @@ def create_task():
 
         output = TaskDTO(dict(nw_task))
         output.set_skill_set(SkillListDTO(skill_set).to_json)
-        return {"status": True, "task": output.to_json}
+        return output.to_json
 
 
 def assignment_task():
@@ -48,7 +71,7 @@ def assignment_task():
         tasks = _task_list(uow=uow)
         if len(tasks.list) == 0:
             return {"status": True, "message": "There are no tasks available for assignment"}
-        
+
         employees = None
         # 1. find user By skill
         for task in tasks.list:
@@ -122,11 +145,11 @@ def _pick_employee(uow: create_uow, calendar, employees, time_use):
             date_assignment=date_assignment, employees_id=employees_id_str)
 
         candidates = [dict(item) for item in rs]
-        
+
         if len(candidates) == 0:
             pick_employee_id = employees_id[0]
             break
-        
+
         if len(candidates) < len(employees_id):
             pick_employee_id = employees_id[len(candidates)]
             break
@@ -135,10 +158,9 @@ def _pick_employee(uow: create_uow, calendar, employees, time_use):
             if candidate.get('hours_remaining') >= time_use:
                 pick_employee_id = candidate.get('id')
                 break
-        
+
         if pick_employee_id is not None and date_assignment is not None:
             break
-            
 
     return pick_employee_id, date_assignment
 
