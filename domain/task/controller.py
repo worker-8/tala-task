@@ -28,11 +28,12 @@ def create_task():
     payload_task = TaskDTO(request.json)
     list_of_skill = request.json.get("skill_set")
 
-    nw_task = _create_task_helper(task=payload_task, list_of_skill=list_of_skill)
-    
-    if nw_task[0]['status'] == False:
-        return nw_task
-    
+    nw_task = _create_task_helper(
+        task=payload_task, list_of_skill=list_of_skill)
+
+    if 'msg_error' in nw_task:
+        return ({"status": False, "tasks": nw_task})
+
     return {"status": True, "tasks": nw_task}
 
 
@@ -59,19 +60,14 @@ def upload_csv():
 def _create_task_helper(task: TaskDTO, list_of_skill):
     with create_uow() as uow:
         if task.is_valid == False:
-            return ({
-                'status': False,
-                'message': task.msg_error
-            },401)
+            return task.to_json
 
         if list_of_skill is None:
-            return ({
-                'status': False,
-                'message': 'It is not possible to create a task without at least one required Skill'}, 401)
+            task.msg_error = [
+                'It is not possible to create a task without at least one required Skill']
+            return task.to_json
 
         nw_task = uow.task_repository.create(task)
-
-        
 
         for skill in list_of_skill.split(','):
             _merge_task_skill(uow=uow, task_id=nw_task['id'], skill_id=skill)

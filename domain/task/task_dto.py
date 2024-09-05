@@ -5,7 +5,7 @@ regex = re.compile("[0-9]{4}\-[0-9]{2}\-[0-9]{2}")
 class TaskDTO:
     def __init__(self, data):
         self.id = data.get("id")
-        self.title = data.get("title")
+        self.title = data.get("title", '')
         self.due_date = data.get("due_date")
         self.time_use = data.get("time_use")
         self.is_assignment = str(data.get("is_assignment", "0"))
