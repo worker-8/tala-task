@@ -15,7 +15,11 @@ def find_skill():
 def create_skill():
     payload = SkillDTO(request.json)
     nw_skill = _create_skill_helper(skill=payload)
-    return {"status": True, "skill": nw_skill}
+
+    if 'msg_error' in nw_skill:
+        return ({"status": False, "nw_skill": nw_skill})
+
+    return {"status": True, "nw_skill": nw_skill}
 
 
 def upload_csv():
@@ -40,6 +44,7 @@ def _create_skill_helper(skill: SkillDTO):
     with create_uow() as uow:
         if skill.is_valid == False:
             return skill.to_json
+
         # TODO: verify if the skill is there.
         nw_skill = uow.skill_repository.create(skill)
         return SkillDTO(dict(nw_skill)).to_json
