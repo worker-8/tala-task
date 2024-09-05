@@ -49,3 +49,13 @@ class AssignmentRepository:
         cursor.execute(query, [due_date])
 
         return cursor.fetchall()
+    
+    def report(self):
+        cursor = self.connection.cursor()
+        query = f"""
+                SELECT * 
+                FROM calendar_availability
+            """
+        cursor.execute(query, [])
+        
+        return cursor.fetchall()
