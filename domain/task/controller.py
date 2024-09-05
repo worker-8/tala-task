@@ -16,12 +16,22 @@ def find_task():
         return {"status": True, "list": list}
 
 
+def report():
+    with create_uow() as uow:
+        rs = uow.assignment_repository.report()
+        data = [dict(item) for item in rs]
+        print(data)
+        return {"status": True, "list": data}
+
+
 def create_task():
     payload_task = TaskDTO(request.json)
     list_of_skill = request.json.get("skill_set")
 
-    nw_task = _create_task_helper(task=payload_task, list_of_skill=list_of_skill)
+    nw_task = _create_task_helper(
+        task=payload_task, list_of_skill=list_of_skill)
     return {"status": True, "tasks": nw_task}
+
 
 def upload_csv():
     if request.method == "POST":

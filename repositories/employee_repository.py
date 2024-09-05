@@ -58,5 +58,4 @@ class EmployeeRepository:
             """
         cursor.execute(query, [date_assignment])
         
-        # print(query, employees_id)
         return cursor.fetchall()
