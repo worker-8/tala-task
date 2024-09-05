@@ -1,3 +1,7 @@
+import re
+
+regex = re.compile("[0-9]{4}\-[0-9]{2}\-[0-9]{2}")
+
 class TaskDTO:
     def __init__(self, data):
         self.id = data.get("id")
@@ -29,11 +33,37 @@ class TaskDTO:
         if hasattr(self, 'group_skills_id'):
             output['group_skills_id'] = self.group_skills_id
 
+        if hasattr(self, 'msg_error'):
+            output['msg_error'] = self.msg_error
+
         return output
 
     def set_skill_set(self, skill_set):
         self.skill_set = skill_set
 
+    @property
+    def is_valid(self):
+        valid = True
+        self.msg_error = []
+        match = re.match(regex, self.due_date)
+        
+
+        if len(self.title) == 0:
+            valid = False
+            self.msg_error.append('Must have a title')
+        
+        if int(self.time_use) < 0 and int(self.time_use) > 8:
+            valid = False
+            self.msg_error.append('The task can last between 1 and 8 hours')
+        
+        if match == False:
+            valid = False
+            self.msg_error.append('Date Format is YYYY-MM-DD')
+
+        if valid:
+            delattr(self, 'msg_error')
+
+        return valid
 
 class TaskListDTO:
     def __init__(self, data):
