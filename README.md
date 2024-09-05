@@ -1,5 +1,5 @@
 # tala-task
-Proyecto de prueba tecnica para Talana.
+Proyecto de prueba tecnica para Talana. Se decidio hacer con Python utilizado el framework flask y como base de datos SQLite, esta desicion se tomo en virtud al tiempo asi mismo minimizar la posibilidad de fallo por configuraciones.
 
 ## Requerimientos Docker.
 
@@ -96,7 +96,7 @@ curl --request POST \
 |name|value|descripcion|
 |----|-----|-----------|
 |employee_name|Jaime|(string)nombre del empleado|
-|hours_per_day|8|(number)cantidad horas trabajadas|
+|hours_per_day|8|(number 1-8)cantidad horas trabajadas|
 |available_days|1,2,3,4,5|(string)corresponde a los numeros de dia de la semana lunes:1 .. viernes:5|
 |skill_set|1,2,5|(string) ids de skills que posee el employee revisar en el [endpoint](#find_skill)|
 
@@ -119,7 +119,7 @@ curl --request POST \
 |----|-----|-----------|
 |title|Tarea 1|(string)nombre de la tarea|
 |due_date|2024-09-01|(date) fecha de termino de la tarea formato **YYYY-MM-DD** |
-|time_use|4|(number)cantidad horas destinadas a la tarea|
+|time_use|4|(number 1-8)cantidad horas destinadas a la tarea|
 |skill_set|1,2,5|(string) ids de skills que posee el employee revisar en el [endpoint](#find_skill)|
 ### create_skill
 crea una skill
@@ -154,6 +154,7 @@ se pueden llenar de forma grupal a travez de los cargadores de CSV a coninuacion
 
 ## Cosas que faltaron
 
+- pruebas unitarias.
 - Validar que Skills y Employees no se repetieran.
 - En caso de actividades mas largas que las horas disponibles, fraccionarlas.
 - Endpoint de reporte.
